@@ -10,9 +10,12 @@
 - [Comparativa de DNS públicos](#-comparativa-de-dns-públicos)
 - [¿Cuál deberías elegir?](#-cuál-deberías-elegir)
 - [Configura el DNS en tu router](#-configura-el-dns-en-tu-router)
-- [Configura el DNS en tus dispositivos](#-configura-el-dns-en-tus-dispositivos)
+- [Configura el DNS en Windows](#-configura-el-dns-en-windows)
+- [Configura el DNS en Android](#-configura-el-dns-en-android)
+- [Configura el DNS en iPhone y iPad (iOS/iPadOS)](#-configura-el-dns-en-iphone-y-ipad-iosipados)
 - [DNS cifrado: DoH y DoT](#-dns-cifrado-doh-y-dot)
 - [Comprueba que funciona](#-comprueba-que-funciona)
+- [Prueba el bloqueo de anuncios y rastreadores](#-prueba-el-bloqueo-de-anuncios-y-rastreadores)
 - [Buenas prácticas y limitaciones](#-buenas-prácticas-y-limitaciones)
 - [Fuentes oficiales](#-fuentes-oficiales)
 
@@ -87,7 +90,7 @@ DNS secundario:  1.0.0.3
 
 > Algunos routers de proveedores de Internet no permiten editar el DNS. En ese caso, puedes configurarlo dispositivo por dispositivo o utilizar un router propio compatible. Cambiar el DNS en el router **no obliga** a todas las aplicaciones a usarlo: un navegador, una VPN o un teléfono pueden tener su propia configuración.
 
-## 💻 Configura el DNS en tus dispositivos
+## 💻 Configura el DNS en Windows
 
 ### Windows 11
 
@@ -99,6 +102,8 @@ DNS secundario:  1.0.0.3
 6. Guarda los cambios.
 
 > No confundas **Asignación de DNS** con **Asignación de IP**: no necesitas cambiar tu dirección IP para utilizar DNS públicos.
+
+## 🤖 Configura el DNS en Android
 
 ### Android 9 o posterior: DNS privado
 
@@ -117,7 +122,9 @@ DNS secundario:  1.0.0.3
 
 4. Guarda. Android utiliza **DNS over TLS (DoT)** para esta modalidad y, normalmente, aplica el ajuste a Wi-Fi y datos móviles.
 
-### iPhone / iPad: una red Wi-Fi
+## 🍎 Configura el DNS en iPhone y iPad (iOS/iPadOS)
+
+### Opción 1: configuración manual para una red Wi-Fi
 
 1. Entra en **Ajustes → Wi-Fi**.
 2. Toca el botón de información **ⓘ** junto a tu red.
@@ -125,7 +132,25 @@ DNS secundario:  1.0.0.3
 4. Elimina las entradas anteriores, si corresponde, y agrega las dos IP del servicio seleccionado.
 5. Guarda los cambios.
 
-**Nota:** esta configuración manual corresponde a la red Wi-Fi seleccionada; no establece por sí sola un DNS personalizado para todas las redes o para los datos móviles. Para eso se necesita una aplicación o perfil DNS compatible. Introducir IPs manualmente en Wi-Fi tampoco implica que las consultas estén cifradas.
+**Nota:** esta configuración manual corresponde solo a la red Wi-Fi seleccionada; no establece por sí sola un DNS personalizado para todas las redes ni para los datos móviles. Introducir IPs manualmente en Wi-Fi tampoco implica que las consultas estén cifradas.
+
+### Opción 2: DNS cifrado (DoH/DoT) mediante perfil de configuración
+
+En iOS 14 y posteriores, los perfiles de configuración pueden definir un resolutor DNS cifrado para el dispositivo. Esta es una alternativa para usar el mismo proveedor en Wi-Fi y datos móviles, siempre que la red, las restricciones del sistema y las aplicaciones lo permitan.
+
+1. Selecciona un proveedor que ofrezca **perfil DNS para iOS/iPadOS** (por ejemplo, [AdGuard DNS público](https://adguard-dns.io/es/public-dns.html)).
+2. Desde su **sitio oficial**, selecciona la modalidad deseada (estándar o familiar) y genera o descarga el perfil para iOS/macOS. Comprueba que corresponda al servicio elegido.
+3. En tu iPhone o iPad, abre el perfil descargado y sigue las indicaciones del sistema. En general, entra en **Ajustes → Perfil descargado** o **Ajustes → General → VPN y gestión de dispositivos**, según la versión de iOS.
+4. Revisa el nombre, el origen y los permisos del perfil antes de instalarlo; no instales perfiles obtenidos de fuentes desconocidas.
+5. Una vez instalado, comprueba su funcionamiento tanto en Wi-Fi como en datos móviles mediante las páginas de prueba del proveedor.
+
+> **Precaución:** las VPN, las aplicaciones con su propio DNS, las redes que bloquean el acceso al resolutor y algunas políticas de administración del dispositivo pueden modificar o impedir este comportamiento. Para revertirlo, elimina el perfil desde **VPN y gestión de dispositivos**, si tu dispositivo permite hacerlo.
+
+### Opción 3: aplicación oficial con protección DNS
+
+Una aplicación del proveedor compatible con iOS puede gestionar DNS cifrado y facilitar el cambio de perfiles. Consulta la documentación oficial, por ejemplo [AdGuard para iOS](https://adguard.com/kb/es/adguard-for-ios/features/dns-protection/). Ten en cuenta que algunas aplicaciones usan una configuración VPN local para dirigir el tráfico DNS, lo cual puede interferir con otra VPN.
+
+**¿Qué opción elegir?** Para proteger únicamente tu Wi-Fi de casa, la **opción 1** suele ser suficiente. Si quieres aplicar DNS cifrado al cambiar entre Wi-Fi y datos móviles, evalúa la **opción 2** o **3** y verifica que el filtrado siga activo.
 
 ## 🔐 DNS cifrado: DoH y DoT
 
@@ -186,6 +211,27 @@ ipconfig /flushdns
 
 > `nslookup` confirma el comportamiento de esa consulta y puede mostrar el servidor configurado, **pero no demuestra por sí solo** que todo el tráfico de las aplicaciones esté filtrado ni que DNS esté cifrado.
 
+## 🧪 Prueba el bloqueo de anuncios y rastreadores
+
+Después de configurar tu DNS, visita **[Ad Blocker Test — Turtlecute](https://adblock.turtlecute.org/)** para comprobar desde el navegador si tu configuración está bloqueando determinados anuncios, rastreadores y solicitudes a dominios publicitarios.
+
+**Cómo realizar la prueba:**
+
+1. Conecta el equipo o teléfono a la red donde configuraste el DNS (o activa el DNS privado del dispositivo).
+2. Abre **https://adblock.turtlecute.org/** en tu navegador, con JavaScript habilitado.
+3. Examina el resultado en las categorías **Host**, **Cosmetic Filter** y **Ad Scripts Loading**.
+4. Si quieres comparar, repite la prueba con y sin tu bloqueador de navegador, sin modificar innecesariamente la configuración de seguridad de tu red.
+
+| Categoría | ¿Qué comprueba? | ¿Un DNS público con filtrado puede bloquearlo? |
+|---|---|---|
+| **Host** | Solicitudes a dominios asociados a anuncios, analítica y rastreadores | **Sí, cuando esos dominios están incluidos en sus reglas** |
+| **Cosmetic Filter** | Ocultación visual de espacios publicitarios en la página | **No**; requiere filtrado en el navegador |
+| **Ad Scripts Loading** | Bloqueo de scripts y recursos publicitarios en la página | **No necesariamente**; depende de un bloqueador a nivel del navegador |
+
+> ⚠️ **No busques necesariamente un 100 %.** Un DNS como AdGuard DNS puede bloquear dominios sin eliminar elementos visuales o scripts que se sirven desde dominios permitidos. Cloudflare estándar y Google Public DNS no son bloqueadores de anuncios; Cloudflare Familias se enfoca en malware y contenido adulto, no en publicidad general. **Una puntuación baja no demuestra, por sí sola, que la protección contra malware o phishing esté desactivada.** El resultado también puede verse afectado por extensiones, VPN, listas de filtrado y características del navegador.
+
+Esta es una herramienta de terceros para una **prueba orientativa del bloqueo de anuncios y rastreadores**, no una auditoría integral de seguridad ni una verificación del cifrado DNS. Para validar el proveedor y la política DNS, utiliza también las comprobaciones oficiales indicadas en la sección anterior.
+
 ## 🔒 Buenas prácticas y limitaciones
 
 1. **Mantén actualizado el router** y cambia su contraseña administrativa predeterminada.
@@ -215,7 +261,9 @@ ipconfig /flushdns
 - [OpenDNS: guía oficial](https://www.opendns.com/setupguide/)
 - [Cisco: OpenDNS FamilyShield](https://www.cisco.com/c/en/us/support/docs/security/umbrella/225803-understand-opendns-familyshield.html)
 - [Microsoft: configuración de DNS en Windows](https://support.microsoft.com/en-us/windows/experience/connectivity-networking/essential-network-settings-and-tasks-in-windows)
-- [Apple: administrar ajustes Wi-Fi en iPhone](https://support.apple.com/es-lamr/guide/iphone/iphw5gjwl8k2/ios)
+- [Apple: configuración de DNS cifrado mediante perfiles](https://developer.apple.com/documentation/devicemanagement/dnssettings)
+- [AdGuard: DNS público y perfil para iOS/macOS](https://adguard-dns.io/es/public-dns.html)
+- [AdGuard: protección DNS en iOS](https://adguard.com/kb/es/adguard-for-ios/features/dns-protection/)
 
 ---
 
